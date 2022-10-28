@@ -10,6 +10,21 @@ const { InjectManifest } = require('workbox-webpack-plugin');
 
 module.exports = () => {
   return {
+    mode: 'development',
+    entry: {
+      main: './src/js/index.js',
+      install: './src/js/install.js'
+    },
+    output: {
+      filename: '[name].bundle.js',
+      path: path.resolve(__dirname, 'dist'),
+    },
+    plugins: [
+      //web pack
+      new HtmlWebpackPlugin({
+        template: './index.html',
+        title: 'JATE'
+      }),
     // create service worker
     new InjectManifest({
       swSrc: './src-sw.js',
@@ -34,22 +49,29 @@ module.exports = () => {
         destination: path.join('assets', 'icons'),
       }]
     })
-    mode: 'development',
-    entry: {
-      main: './src/js/index.js',
-      install: './src/js/install.js'
-    },
-    output: {
-      filename: '[name].bundle.js',
-      path: path.resolve(__dirname, 'dist'),
-    },
-    plugins: [
       
     ],
-
+    // create loaders
     module: {
       rules: [
-        
+        //tests
+        {
+          test: /\.css$/i,
+          use: ['style-loader', 'css-loader'],
+        },
+
+        {
+          test: /\.m?js$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/present-env'],
+              plugins: ['@babel/plugin-proposal-object-rest-spread', '@babel/transform-runtime']
+            }
+          }
+        }
+   
       ],
     },
   };
